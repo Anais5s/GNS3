@@ -1,0 +1,9 @@
+{
+    "name": "R1",
+    "telnet": {
+        "url":"www.telnet.com",
+        "port": 5000
+    },
+    "ip": "2001",
+    "interface": ["Ge1/0", "Ge2/0"]
+}
