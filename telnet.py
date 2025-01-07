@@ -1,11 +1,10 @@
 from gns3fy import Gns3Connector, Project, Node
 import telnetlib
-import time
 
 # Configuration de base
 GNS3_SERVER_URL = "http://localhost:3080"  
 PROJECT_NAME = "GNS3"          				
-ROUTER_NAME = "R1"                        #a modifier pour avoir le nom de tous les routeurs
+ROUTER_NAME = "R1"                        # À modifier pour avoir le nom de tous les routeurs
 TELNET_PORT = 5000                        # Port telnet du routeur//pareil^
 
 def envoyer_commandes_telnet(host, port, commandes):
@@ -38,8 +37,8 @@ def envoyer_commandes_telnet(host, port, commandes):
         tn.write(b"exit\n")
 
         print("Configuration envoyée avec succès.")
-        output = tn.read_all().decode('ascii')
-        print(output)
+        print(tn.read_all().decode('ascii'))
+
     except Exception as e:
         print(f"Erreur lors de l'envoi des commandes Telnet : {e}")
 

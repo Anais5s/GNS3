@@ -1,9 +1,32 @@
 {
-    "name": "R1",
     "telnet": {
-        "url":"www.telnet.com",
-        "port": 5000
+        "GNS3_server_url": "www.telnet.com",
+        "port": 5000,
+        "projet_name": "GNS3"
     },
-    "ip": "2001",
-    "interface": ["Ge1/0", "Ge2/0"]
+
+    "router": [
+        {
+        "name": "R1",
+        "interface": [
+            {
+            "name": "GigabitEthernet1/0",
+            "ip": "2001:12::1/64"
+            }
+        ]
+    },
+    {
+        "name": "R2",
+        "interface": [
+            {
+            "name": "GigabitEthernet1/0",
+            "ip": "2001:12::2/64"
+            }
+        ]
+    }
+    ],
+
+    "reseau": [
+        ["R1-Ge1/0", "R2-Ge1/0"]
+    ]
 }
