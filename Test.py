@@ -3,10 +3,10 @@ import telnetlib
 import time
 
 # Configuration de base
-GNS3_SERVER_URL = "http://localhost:3080"  # URL du serveur GNS3
-PROJECT_NAME = "AutomationTest"           # Nom du projet GNS3
-ROUTER_NAME = "R1"                        # Nom du routeur dans le projet
-TELNET_PORT = 5000                        # Port telnet du routeur (à vérifier dans GNS3)
+GNS3_SERVER_URL = "http://localhost:3080"  
+PROJECT_NAME = "GNS3"          				
+ROUTER_NAME = "R1"                        #a modifier pour avoir le nom de tous les routeurs
+TELNET_PORT = 5000                        # Port telnet du routeur//pareil^
 
 def envoyer_commandes_telnet(host, port, commandes):
     """
@@ -24,8 +24,6 @@ def envoyer_commandes_telnet(host, port, commandes):
         # Attendre l'invite et entrer en mode enable
         tn.read_until(b"Router>")
         tn.write(b"enable\n")
-        tn.read_until(b"Password:")
-        tn.write(b"cisco\n")  # Remplacez par le mot de passe enable
 
         # Entrer en mode configuration
         tn.write(b"configure terminal\n")
@@ -36,7 +34,7 @@ def envoyer_commandes_telnet(host, port, commandes):
 
         # Quitter la configuration
         tn.write(b"end\n")
-        tn.write(b"write memory\n")  # Sauvegarder la configuration
+        tn.write(b"write\n")  # Sauvegarder la configuration
         tn.write(b"exit\n")
 
         print("Configuration envoyée avec succès.")
@@ -63,12 +61,12 @@ def main():
     # Commandes de configuration pour le routeur
     commandes = [
         "interface GigabitEthernet0/0",
-        "ip address 192.168.1.1 255.255.255.0",
+        "ipv6 enable",
+        "ipv6 address 192.168.1.1",
         "no shutdown"
     ]
 
     # Envoyer les commandes via Telnet
     envoyer_commandes_telnet("localhost", TELNET_PORT, commandes)
 
-if __name__ == "__main__":
-    main()
+main()
