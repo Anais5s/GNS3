@@ -62,7 +62,7 @@ def main():
     commandes = [
         "interface GigabitEthernet0/0",
         "ipv6 enable",
-        "ipv6 address 192.168.1.1",
+        "ipv6 address 192.168.1.1::1",
         "no shutdown"
     ]
 
