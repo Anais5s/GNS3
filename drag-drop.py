@@ -15,8 +15,7 @@ no ip domain-lookup
 no ip icmp rate-limit unreachable
 ip tcp synwait 5
 no cdp log mismatch duplex
-!
-{int_config}
+!{int_config}
 line con 0
  exec-timeout 0 0
  logging synchronous
@@ -38,7 +37,7 @@ interface {int_name}
  no shutdown"""
 
 # Charger le fichier JSON
-with open('config.json', 'r') as JSON:
+with open('intent.json', 'r') as JSON:
     intent = json.load(JSON)
 
 # Fonction pour générer les adresses IPv6 des interfaces
@@ -78,17 +77,18 @@ def generate_config(router_name, all_int_config):
 
 router_id = {} # Dictionnaire pour l'identification numérique des routeurs et les interfaces
 # Générer les identifiants de chaque routeur
-for i in range (1,len(intent['router'])+1):
-    router_name = intent['router'][i-1]['name']
-    router_id[router_name]=i
+i=1 # initialisation des id
+for domain in intent['domain']:
+    # router_domain = intent['domain'][i]['router']
+    for router_name in domain['router']:
+        router_id[router_name]=i
+        i+=1 # nouvel id
 
 # Récupérer les configurations des interfaces de tous les routeurs selon les liens existants
 all_int_config = interfaces_config(router_id)
 
 # Générer les fichiers de configuration pour chaque routeur
-for router in intent['router']:
-    router_name = router['name']
-
+for router_name in router_id.keys():
     # Générer la configuration pour chaque routeur
     config = generate_config(router_name, all_int_config)
     
