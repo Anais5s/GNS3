@@ -19,10 +19,10 @@
     ],
 
     "reseau": [
-        ["R1", "GigabitEthernet1/0", "R2", "GigabitEthernet1/0"],
-        ["R2", "GigabitEthernet2/0", "R3", "GigabitEthernet2/0"],
-        ["R3", "GigabitEthernet1/0", "R4", "GigabitEthernet1/0"],
-        ["R4", "GigabitEthernet2/0", "R5", "GigabitEthernet2/0"],
-        ["R5", "GigabitEthernet1/0", "R6", "GigabitEthernet1/0"]
+        [["R1", "GigabitEthernet1/0"], ["R2", "GigabitEthernet1/0"]],
+        [["R2", "GigabitEthernet2/0"], ["R3", "GigabitEthernet2/0"]],
+        [["R3", "GigabitEthernet1/0"], ["R4", "GigabitEthernet1/0"]],
+        [["R4", "GigabitEthernet2/0"], ["R5", "GigabitEthernet2/0"]],
+        [["R5", "GigabitEthernet1/0"], ["R6", "GigabitEthernet1/0"]]
     ]
 }
