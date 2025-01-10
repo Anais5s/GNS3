@@ -34,7 +34,7 @@ end"""
 interface_template = """
 interface {int_name}
  no ip address
- ip address {int_ip}
+ ipv6 address {int_ip}
  ipv6 enable
  no shutdown"""
 
