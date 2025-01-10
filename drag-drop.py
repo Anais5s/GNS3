@@ -80,7 +80,7 @@ def interfaces_config(router_id):
 
     # Collecte des liens entre les routeurs
     for link in intent['reseau']:
-		router_name_X, inter_X = link[0]
+        router_name_X, inter_X = link[0]
         router_name_Y, inter_Y = link[1]
         router_X_id = router_id[router_name_X]
         router_Y_id = router_id[router_name_Y]
@@ -89,8 +89,8 @@ def interfaces_config(router_id):
              out_domain[router_X_id] += inter_X
              out_domain[router_Y_id] += inter_Y
 
-		all_int_config[router_X_id] += generate_interface_config(router_X_id, router_Y_id, router_X_id, inter_X) # IP pour le routeur X
-    	all_int_config[router_Y_id] += generate_interface_config(router_Y_id, router_X_id, router_Y_id, inter_Y) # IP pour le routeur Y
+        all_int_config[router_X_id] += generate_interface_config(router_X_id, router_Y_id, router_X_id, inter_X) # IP pour le routeur X
+        all_int_config[router_Y_id] += generate_interface_config(router_Y_id, router_X_id, router_Y_id, inter_Y) # IP pour le routeur Y
 	
 
 
