@@ -55,9 +55,9 @@ def generate_ipv6_address(router_id, neighbor_id, suffix):
     Y = max(router_id, neighbor_id)
     return f"2001:{X}:{Y}::{suffix}/64"
 
-def generate_interface_protocol(router_id, neighbor_id):
-    if (router_id==0) or (neighbor_id==0): 	#probleme pour la loopback comment acceder au protocole?
-        return
+def generate_interface_protocol(router_id, neighbor_id, suffix):
+    if (router_id==0) or (neighbor_id==0): 	
+        neighbor_id=suffix
     if (router_domain[router_id]!=router_domain[neighbor_id]):
         return 
     elif (router_domain[router_id][1]=="RIP"):
@@ -72,7 +72,7 @@ def generate_interface_config(router_id, neighbor_id, suffix, inter):
     int_config = interface_template.format(
         int_name=inter,
         int_ip=generate_ipv6_address(router_id, neighbor_id, suffix),
-        protocol=generate_interface_protocol(router_id, neighbor_id)
+        protocol=generate_interface_protocol(router_id, neighbor_id, suffix)
     )
     return int_config
 
