@@ -56,9 +56,9 @@ def generate_ipv6_address(router_id, neighbor_id, suffix):
     return f"2001:{X}:{Y}::{suffix}/64"
 
 def generate_interface_protocol(router_id, neighbor_id, suffix):
-    if (router_id==0) or (neighbor_id==0): 	#probleme pour la loopback comment acceder au protocole?
+    if (router_id==0) or (neighbor_id==0): 	#if necessaire car pour la loopback les deux id valent 0 ce qui n'est pas un indice valable pour router_domain
         router_id=suffix
-        neighbor_id=suffix
+        neighbor_id=suffix	#suffix etant l'id du routeur ici
     if (router_domain[router_id]!=router_domain[neighbor_id]):
         return 
     elif (router_domain[router_id][1]=="RIP"):
