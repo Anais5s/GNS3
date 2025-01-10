@@ -36,7 +36,8 @@ interface {int_name}
  no ip address
  ipv6 address {int_ip}
  ipv6 enable
- no shutdown"""
+ no shutdown
+ !"""
 
 # Charger le fichier JSON
 with open('intent.json', 'r') as JSON:
@@ -61,6 +62,7 @@ def generate_interface_config(router_id, neighbor_id, suffix, int):
 def interfaces_config(router_id):
     # all_int_config = {id: "" for id in router_id.values()} # Initialise les dictionnaires pour stocker la configuration des interfaces de tous les routeurs
     all_int_config = {}
+    out_domain = {id: "" for id in router_id.values()}
     for id in router_id.values():
         all_int_config[id] = generate_interface_config("0", "0", id, "Loopback0")
 
@@ -70,11 +72,14 @@ def interfaces_config(router_id):
         router_name_Y, int_Y = link[1]
         router_X_id = router_id[router_name_X]
         router_Y_id = router_id[router_name_Y]
-
+		
         all_int_config[router_X_id] += generate_interface_config(router_X_id, router_Y_id, router_X_id, int_X) # IP pour le routeur X
         all_int_config[router_Y_id] += generate_interface_config(router_Y_id, router_X_id, router_Y_id, int_Y) # IP pour le routeur Y
+        if router_domain[router_X_id]!=router_domain[router_Y_id]:	#regarde si les 2 routeurs sont dans le meme domaine
+             out_domain[router_X_id] += int_X
+             out_domain[router_Y_id] += int_Y
 
-    return all_int_config
+    return all_int_config, out_domain
 
 # Fonction pour générer la configuration de chaque routeur
 def generate_config(router_name, all_int_config):
@@ -82,6 +87,7 @@ def generate_config(router_name, all_int_config):
     return config_template.format(router_name=router_name, int_config=int_config)
 
 router_id = {} # Dictionnaire pour l'identification numérique des routeurs et les interfaces
+router_domain = {} # Dictionnaire pour l'appartenance d'un routeur a un domain
 # Générer les identifiants de chaque routeur
 i=1 # initialisation des id
 for domain in intent['domain']:
@@ -89,9 +95,11 @@ for domain in intent['domain']:
     for router_name in domain['router']:
         router_id[router_name]=i
         i+=1 # nouvel id
+        router_domain[router_id[router_name]]=domain['AS']
 
 # Récupérer les configurations des interfaces de tous les routeurs selon les liens existants
-all_int_config = interfaces_config(router_id)
+all_int_config, out_domain = interfaces_config(router_id)
+
 
 # Générer les fichiers de configuration pour chaque routeur
 for router_name in router_id.keys():
