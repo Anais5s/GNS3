@@ -49,16 +49,13 @@ with open('intent.json', 'r') as JSON:
     intent = json.load(JSON)
 
 # Fonction pour générer les adresses IPv6 des interfaces
-def generate_ipv6_address(router_id, neighbor_id, suffix):
+def generate_ipv6_address(router_id, neighbor_id):
     # X est le plus petit router_id, Y est l'autre router_id à connecter
     X = min(router_id, neighbor_id)
     Y = max(router_id, neighbor_id)
-    return f"2001:{X}:{Y}::{suffix}/64"
+    return f"2001:{X}:{Y}::{router_id}/64"
 
-def generate_interface_protocol(router_id, neighbor_id, suffix):
-    if (router_id==0) or (neighbor_id==0): 	#if necessaire car pour la loopback les deux id valent 0 ce qui n'est pas un indice valable pour router_domain
-        router_id=suffix
-        neighbor_id=suffix	#suffix etant l'id du routeur ici
+def generate_interface_protocol(router_id, neighbor_id):
     if (router_domain[router_id]!=router_domain[neighbor_id]):
         return 
     elif (router_domain[router_id][1]=="RIP"):
@@ -66,16 +63,23 @@ def generate_interface_protocol(router_id, neighbor_id, suffix):
     else:
         return f"ipv6 ospf {process_ospf} area {area_ospf}"  #on pourrait avoir un dico area_ospf qui associe un numero d'AS a un numero d'area
 
-    
-
 # Fonction pour générer la configuration d'une interface
-def generate_interface_config(router_id, neighbor_id, suffix, inter):
+def generate_interface_config(router_id, neighbor_id, inter):
     int_config = interface_template.format(
         int_name=inter,
-        int_ip=generate_ipv6_address(router_id, neighbor_id, suffix),
-        protocol=generate_interface_protocol(router_id, neighbor_id, suffix)
+        int_ip=generate_ipv6_address(router_id, neighbor_id),
+        protocol=generate_interface_protocol(router_id, neighbor_id)
     )
     return int_config
+
+def generate_interface_loopback(id):
+    int_config = interface_template.format(
+        int_name="loopback0",
+        int_ip=f"2001::{id}/128",
+        protocol=generate_interface_protocol(id,id)
+    )
+    return int_config
+
 
 # Fonction pour générer toutes les configurations des interfaces de tous les routeurs selon les liens existants
 def interfaces_config(router_id):
@@ -83,7 +87,7 @@ def interfaces_config(router_id):
     all_int_config = {}
     out_domain = {id: "" for id in router_id.values()}
     for id in router_id.values():
-        all_int_config[id] = generate_interface_config(0, 0, id, "Loopback0")
+        all_int_config[id] = generate_interface_loopback(id)
 
     # Collecte des liens entre les routeurs
     for link in intent['reseau']:
@@ -96,8 +100,8 @@ def interfaces_config(router_id):
              out_domain[router_X_id] += inter_X
              out_domain[router_Y_id] += inter_Y
 
-        all_int_config[router_X_id] += generate_interface_config(router_X_id, router_Y_id, router_X_id, inter_X) # IP pour le routeur X
-        all_int_config[router_Y_id] += generate_interface_config(router_Y_id, router_X_id, router_Y_id, inter_Y) # IP pour le routeur Y
+        all_int_config[router_X_id] += generate_interface_config(router_X_id, router_Y_id, inter_X) # IP pour le routeur X
+        all_int_config[router_Y_id] += generate_interface_config(router_Y_id, router_X_id, inter_Y) # IP pour le routeur Y
 	
 
 
