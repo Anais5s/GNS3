@@ -1,7 +1,7 @@
 import json
 
 process_rip= "rip1"
-process_ospf= "ospf1"
+process_ospf= "1"
 area_ospf= 0
 
 # Template de la configuration de base Cisco
@@ -13,12 +13,12 @@ service timestamps log datetime msec
 no service password-encryption
 !
 hostname {router_name}
+ipv6 unicast-routing
 !
 ip cef
 no ip domain-lookup
 no ip icmp rate-limit unreachable
 ip tcp synwait 5
-no cdp log mismatch duplex
 !{int_config}
 ip forward-protocol nd
 !
@@ -52,7 +52,7 @@ end"""
 interface_template = """
 interface {int_name}
  no ip address
- ip address {int_ip}
+ ipv6 address {int_ip}
  ipv6 enable
  {protocol}
  no shutdown
@@ -71,7 +71,7 @@ def generate_ipv6_address(router_id, neighbor_id):
 
 def generate_interface_protocol(router_id, neighbor_id):
     if (router_domain[router_id]!=router_domain[neighbor_id]):
-        return 
+        return ""
     elif (router_domain[router_id][1]=="RIP"):
         return f"ipv6 rip {process_rip} enable"
     else:
@@ -123,10 +123,10 @@ def interfaces_config(router_id):
 
 def generate_rprotocol(id):
     if (router_domain[id][1]=="RIP"):
-        return f"ipv6 router rip {process_rip} enable \n redistribute connected"
+        return f"ipv6 router rip {process_rip} \nredistribute connected"
     else:
-        return f"ipv6 router ospf {process_ospf} \n router id {id}.{id}.{id}.{id}" 	#possibilte de creation d'un dico associant un router id a chaque routeur
-
+        return f"ipv6 router ospf {process_ospf}\nrouter-id {id}.{id}.{id}.{id}" #possibilte de creation d'un dico associant un router id a chaque routeur
+    
 # Fonction pour générer la configuration de chaque routeur
 def generate_config(router_name, all_int_config):
     int_config = all_int_config[router_id[router_name]]
