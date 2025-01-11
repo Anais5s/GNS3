@@ -20,6 +20,20 @@ no ip icmp rate-limit unreachable
 ip tcp synwait 5
 no cdp log mismatch duplex
 !{int_config}
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+{rprotocol}
+!
+!
+!
+!
+control-plane
+!
+!
 line con 0
  exec-timeout 0 0
  logging synchronous
@@ -107,10 +121,17 @@ def interfaces_config(router_id):
 
     return all_int_config, out_domain
 
+def generate_rprotocol(id):
+    if (router_domain[id][1]=="RIP"):
+        return f"ipv6 router rip {process_rip} enable \n redistribute connected"
+    else:
+        return f"ipv6 router ospf {process_ospf} \n router id {id}.{id}.{id}.{id}" 	#possibilte de creation d'un dico associant un router id a chaque routeur
+
 # Fonction pour générer la configuration de chaque routeur
 def generate_config(router_name, all_int_config):
     int_config = all_int_config[router_id[router_name]]
-    return config_template.format(router_name=router_name, int_config=int_config)
+    rprotocol = generate_rprotocol(router_id[router_name])
+    return config_template.format(router_name=router_name, int_config=int_config, rprotocol=rprotocol)
 
 
 router_id = {} # Dictionnaire pour l'identification numérique des routeurs et les interfaces
