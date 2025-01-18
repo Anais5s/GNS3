@@ -86,18 +86,11 @@ def generate_interface_protocol(router_id, neighbor_id):
 
 # Fonction pour générer la configuration d'une interface
 def generate_interface_config(AS, router_id, neighbor_id, inter):
-    if AS==None:
-        int_config = interface_template.format(
-            int_name=inter,
-            int_ip=generate_ipv6_address_extern(router_id, neighbor_id),
-            protocol=generate_interface_protocol(router_id, neighbor_id)
-        )
-    else:
-        int_config = interface_template.format(
-            int_name=inter,
-            int_ip=generate_ipv6_address_intra(AS, router_id, neighbor_id),
-            protocol=generate_interface_protocol(router_id, neighbor_id)
-        )
+    int_config = interface_template.format(
+        int_name=inter,
+        int_ip=generate_ipv6_address_intra(AS, router_id, neighbor_id) if AS else generate_ipv6_address_extern(router_id, neighbor_id),
+        protocol=generate_interface_protocol(router_id, neighbor_id)
+    )
     return int_config
 
 def generate_interface_loopback(AS, id):
