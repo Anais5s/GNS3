@@ -20,6 +20,8 @@ no ip domain-lookup
 no ip icmp rate-limit unreachable
 ip tcp synwait 5
 !{int_config}
+!
+{bgp}
 ip forward-protocol nd
 !
 !
@@ -58,6 +60,21 @@ interface {int_name}
  no shutdown
  !"""
 
+bgp_template = """
+router bgp {AS}
+ bgp router-id {bgp_id}
+ bgp log-neighbor-changes
+ no bgp default ipv4-unicast
+ {neighbor_entries}
+ !
+ address-family ipv4
+ exit-address-family
+ !
+ address-family ipv6
+ {neighbor_activations}
+ exit-address-family
+!
+"""
 # Charger le fichier JSON
 with open('intent.json', 'r') as JSON:
     intent = json.load(JSON)
@@ -135,12 +152,32 @@ def generate_rprotocol(id):
         return f"ipv6 router rip {process_rip} \nredistribute connected"
     else:
         return f"ipv6 router ospf {process_ospf}\nrouter-id {id}.{id}.{id}.{id}" #possibilte de creation d'un dico associant un router id a chaque routeur
-    
+
+def generate_bgp(id):
+    AS = router_domain[id][0][2:]
+    neighbor_entries = ""
+    neighbor_activations = ""
+    for router in router_domain:
+        if router_domain[router][0]==router_domain[id][0] and router!=id:
+            neighbor_ip=f"2001:{AS}::{router}"
+            neighbor_entries += f" neighbor {neighbor_ip} remote-as {AS}\n"
+            neighbor_entries += f" neighbor {neighbor_ip} update-source Loopback0\n"
+            neighbor_activations += f" neighbor {neighbor_ip} activate\n"
+    bgp = bgp_template.format(
+        AS = AS,
+        bgp_id = f"{id}.{id}.{id}.{id}",
+        neighbor_entries = neighbor_entries,
+        neighbor_activations = neighbor_activations
+	)
+    return bgp
+
+
 # Fonction pour générer la configuration de chaque routeur
 def generate_config(router_name, all_int_config):
     int_config = all_int_config[router_id[router_name]]
     rprotocol = generate_rprotocol(router_id[router_name])
-    return config_template.format(router_name=router_name, int_config=int_config, rprotocol=rprotocol)
+    bgp=generate_bgp(router_id[router_name])
+    return config_template.format(router_name=router_name, int_config=int_config, rprotocol=rprotocol, bgp=bgp)
 
 router_id = {} # Dictionnaire pour l'identification numérique des routeurs et les interfaces
 router_domain = {} # Dictionnaire pour l'appartenance d'un routeur a un domain
