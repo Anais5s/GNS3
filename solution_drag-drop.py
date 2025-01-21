@@ -154,17 +154,22 @@ def generate_rprotocol(id):
         return f"ipv6 router ospf {process_ospf}\nrouter-id {id}.{id}.{id}.{id}" #possibilte de creation d'un dico associant un router id a chaque routeur
 
 def generate_bgp(id):
-    AS = router_domain[id][0][2:]
     neighbor_entries = ""
     neighbor_activations = ""
     for router in router_domain:
-        if router_domain[router][0]==router_domain[id][0] and router!=id:
-            neighbor_ip=f"2001:{AS}::{router}"
+        if router_domain[router][0]==router_domain[id][0] and router!=id:	#trouve les voisins qui sont dans le meme AS
+            AS = router_domain[id][0][2:]
+            neighbor_ip=f"2001:{AS}::{router}"	#adresse loopback du voisin 
             neighbor_entries += f" neighbor {neighbor_ip} remote-as {AS}\n"
             neighbor_entries += f" neighbor {neighbor_ip} update-source Loopback0\n"
             neighbor_activations += f" neighbor {neighbor_ip} activate\n"
+        elif out_domain[id]!="" and out_domain[router]!="" and router!=id: 	#partie entre 2 AS
+            AS=router_domain[router][0][2:]
+            neighbor_ip=f" 2001:{min(router,id)}:{max(router,id)}::{router}"
+            neighbor_entries += f" neighbor {neighbor_ip} remote-as {AS}\n"        
+            neighbor_activations += f" neighbor {neighbor_ip} activate\n"
     bgp = bgp_template.format(
-        AS = AS,
+        AS = router_domain[id][0][2:],
         bgp_id = f"{id}.{id}.{id}.{id}",
         neighbor_entries = neighbor_entries,
         neighbor_activations = neighbor_activations
