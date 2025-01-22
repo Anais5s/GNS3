@@ -72,6 +72,7 @@ router bgp {AS}
  !
  address-family ipv6
  {neighbor_activations}
+ {network}
  exit-address-family
 !
 """
@@ -156,6 +157,7 @@ def generate_rprotocol(id):
 def generate_bgp(id):
     neighbor_entries = ""
     neighbor_activations = ""
+    network = ""
     for router in router_domain:
         if router_domain[router][0]==router_domain[id][0] and router!=id:	#trouve les voisins qui sont dans le meme AS
             AS = router_domain[id][0][2:]
@@ -168,11 +170,13 @@ def generate_bgp(id):
             neighbor_ip=f" 2001:{min(router,id)}:{max(router,id)}::{router}"
             neighbor_entries += f" neighbor {neighbor_ip} remote-as {AS}\n"        
             neighbor_activations += f" neighbor {neighbor_ip} activate\n"
+            network += f"network 2001:{router_domain[id][0][2::]}::/64"
     bgp = bgp_template.format(
         AS = router_domain[id][0][2:],
         bgp_id = f"{id}.{id}.{id}.{id}",
-        neighbor_entries = neighbor_entries,
-        neighbor_activations = neighbor_activations
+        neighbor_entries = neighbor_entries.strip(),
+        neighbor_activations = neighbor_activations.strip(),
+        network = network
 	)
     return bgp
 
