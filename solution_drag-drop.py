@@ -22,12 +22,6 @@ ip tcp synwait 5
 !{int_config}
 !
 {bgp}
-ip forward-protocol nd
-!
-!
-no ip http server
-no ip http secure-server
-!
 {rprotocol}
 !
 !
@@ -71,10 +65,17 @@ router bgp {AS}
  exit-address-family
  !
  address-family ipv6
- {neighbor_activations}
  {network}
+ {neighbor_activations}
  exit-address-family
-!
+ !
+ ip forward-protocol nd
+ !
+ !
+ no ip http server
+ no ip http secure-server
+ !
+ {static}
 """
 # Charger le fichier JSON
 with open('intent.json', 'r') as JSON:
@@ -158,6 +159,7 @@ def generate_bgp(id):
     neighbor_entries = ""
     neighbor_activations = ""
     network = ""
+    static = ""
     for router in router_domain:
         if router_domain[router][0]==router_domain[id][0] and router!=id:	#trouve les voisins qui sont dans le meme AS
             AS = router_domain[id][0][2:]
@@ -170,13 +172,16 @@ def generate_bgp(id):
             neighbor_ip=f" 2001:{min(router,id)}:{max(router,id)}::{router}"
             neighbor_entries += f" neighbor {neighbor_ip} remote-as {AS}\n"        
             neighbor_activations += f" neighbor {neighbor_ip} activate\n"
-            network += f"network 2001:{router_domain[id][0][2::]}::/64"
+            network += f"network 2001:{router_domain[id][0][2::]}::/32"
+            static = f"ipv6 route 2001:{router_domain[id][0][2::]}::/32 Null0"
     bgp = bgp_template.format(
         AS = router_domain[id][0][2:],
         bgp_id = f"{id}.{id}.{id}.{id}",
         neighbor_entries = neighbor_entries.strip(),
+        network = network,
         neighbor_activations = neighbor_activations.strip(),
-        network = network
+        static = static
+        
 	)
     return bgp
 
