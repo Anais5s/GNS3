@@ -88,7 +88,7 @@ def generate_ipv6_address_intra(AS, router_id, neighbor_id):
     Y = max(router_id, neighbor_id)
     return f"2001:{AS[2:]}:{X}:{Y}::{router_id}/64"
 
-# Fonction pour générer les adresses IPv6 des interfaces intra-domain
+# Fonction pour générer les adresses IPv6 des interfaces exter-domain
 def generate_ipv6_address_extern(router_id, neighbor_id):
     # X est le plus petit router_id, Y est l'autre router_id à connecter
     X = min(router_id, neighbor_id)
@@ -153,7 +153,7 @@ def generate_rprotocol(id):
     if (router_domain[id][1]=="RIP"):
         return f"ipv6 router rip {process_rip} \nredistribute connected"
     else:
-        return f"ipv6 router ospf {process_ospf}\nrouter-id {id}.{id}.{id}.{id}" #possibilte de creation d'un dico associant un router id a chaque routeur
+        return f"ipv6 router ospf {process_ospf}\nrouter-id {id}.{id}.{id}.{id}" # Possibilte de creation d'un dico associant un router id a chaque routeur
 
 def generate_bgp(id):
     neighbor_entries = ""
@@ -161,13 +161,13 @@ def generate_bgp(id):
     network = ""
     static = ""
     for router in router_domain:
-        if router_domain[router][0]==router_domain[id][0] and router!=id:	#trouve les voisins qui sont dans le meme AS
+        if router_domain[router][0]==router_domain[id][0] and router!=id:	# Trouve les voisins qui sont dans le meme AS
             AS = router_domain[id][0][2:]
-            neighbor_ip=f"2001:{AS}::{router}"	#adresse loopback du voisin 
+            neighbor_ip=f"2001:{AS}::{router}"	# Adresse loopback du voisin 
             neighbor_entries += f" neighbor {neighbor_ip} remote-as {AS}\n"
             neighbor_entries += f" neighbor {neighbor_ip} update-source Loopback0\n"
             neighbor_activations += f" neighbor {neighbor_ip} activate\n"
-        elif out_domain[id]!="" and out_domain[router]!="" and router!=id: 	#partie entre 2 AS
+        elif out_domain[id]!="" and out_domain[router]!="" and router!=id: 	# Partie entre 2 AS
             AS=router_domain[router][0][2:]
             neighbor_ip=f" 2001:{min(router,id)}:{max(router,id)}::{router}"
             neighbor_entries += f" neighbor {neighbor_ip} remote-as {AS}\n"        
@@ -180,8 +180,7 @@ def generate_bgp(id):
         neighbor_entries = neighbor_entries.strip(),
         network = network,
         neighbor_activations = neighbor_activations.strip(),
-        static = static
-        
+        static = static    
 	)
     return bgp
 
