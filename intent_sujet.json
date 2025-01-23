@@ -1,0 +1,28 @@
+{
+    "telnet": {
+        "GNS3_server_url": "www.telnet.com",
+        "port": 5000,
+        "projet_name": "GNS3"
+    },
+
+    "domain": [
+        {
+        "AS": "AS100",
+        "protocol": "RIP",
+        "router": ["R1", "R2", "R3"]
+        },
+        {
+        "AS": "AS200",
+        "protocol": "OSPF",
+        "router": ["R4", "R5", "R6"]
+        }
+    ],
+
+    "reseau": [
+        [["R1", "GigabitEthernet1/0"], ["R2", "GigabitEthernet1/0"]],
+        [["R2", "GigabitEthernet2/0"], ["R3", "GigabitEthernet2/0"]],
+        [["R3", "GigabitEthernet1/0"], ["R4", "GigabitEthernet1/0"]],
+        [["R4", "GigabitEthernet2/0"], ["R5", "GigabitEthernet2/0"]],
+        [["R5", "GigabitEthernet1/0"], ["R6", "GigabitEthernet1/0"]]
+    ]
+}
