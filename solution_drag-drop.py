@@ -126,7 +126,7 @@ def interfaces_config():
     all_int_config = {}
     for id in router_id.values():
         all_int_config[id] = generate_interface_loopback(router_domain[id][0], id)
-    out_domain = {id: "" for id in router_id.values()}
+    out_domain = {id: [] for id in router_id.values()}
 
     # Collecte des liens entre les routeurs
     for link in intent['reseau']:
@@ -138,8 +138,8 @@ def interfaces_config():
         AS_Y = router_domain[router_Y_id][0]
 
         if AS_X!=AS_Y:	#regarde si les 2 routeurs sont dans le même domaine
-            out_domain[router_X_id] += inter_X
-            out_domain[router_Y_id] += inter_Y
+            out_domain[router_X_id].append(router_Y_id)
+            out_domain[router_Y_id].append(router_X_id)
 
             all_int_config[router_X_id] += generate_interface_config(None,  router_X_id, router_Y_id, inter_X) # IP pour le routeur X
             all_int_config[router_Y_id] += generate_interface_config(None, router_Y_id, router_X_id, inter_Y) # IP pour le routeur Y
@@ -167,7 +167,7 @@ def generate_bgp(id):
             neighbor_entries += f" neighbor {neighbor_ip} remote-as {AS}\n"
             neighbor_entries += f" neighbor {neighbor_ip} update-source Loopback0\n"
             neighbor_activations += f" neighbor {neighbor_ip} activate\n"
-        elif out_domain[id]!="" and out_domain[router]!="" and router!=id: 	# Partie entre 2 AS
+        elif router in out_domain[id]: 	# Partie entre 2 AS
             AS=router_domain[router][0][2:]
             neighbor_ip=f" 2001:{min(router,id)}:{max(router,id)}::{router}"
             neighbor_entries += f" neighbor {neighbor_ip} remote-as {AS}\n"        
