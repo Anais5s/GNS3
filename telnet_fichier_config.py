@@ -5,20 +5,20 @@ import re
 
 # Liste des appareils (fichier de config et ports)
 DEVICES = [
-    {"file": "i1_startup-config.cfg","port": 5000},
-    {"file": "i2_startup-config.cfg","port": 5001},
-    {"file": "i3_startup-config.cfg", "port": 5002},
-    {"file": "i4_startup-config.cfg","port": 5003},
-    {"file": "i5_startup-config.cfg","port": 5004},
-    {"file": "i6_startup-config.cfg", "port": 5005},
-    {"file": "i7_startup-config.cfg","port": 5006},
-    {"file": "i8_startup-config.cfg","port": 5007},
-    {"file": "i9_startup-config.cfg", "port": 5008},
-    {"file": "i10_startup-config.cfg","port": 5009},
-    {"file": "i11_startup-config.cfg","port": 5010},
-    {"file": "i12_startup-config.cfg", "port": 5011},
-    {"file": "i13_startup-config.cfg", "port": 5012},
-    {"file": "i14_startup-config.cfg","port": 5013},
+    {"file": "i1_startup-config.cfg","port": 5006},
+    {"file": "i2_startup-config.cfg","port": 5007},
+    {"file": "i3_startup-config.cfg", "port": 5008},
+    {"file": "i4_startup-config.cfg","port": 5009},
+    {"file": "i5_startup-config.cfg","port": 5010},
+    {"file": "i6_startup-config.cfg", "port": 5011},
+    {"file": "i7_startup-config.cfg","port": 5012},
+    {"file": "i8_startup-config.cfg","port": 5013},
+    {"file": "i9_startup-config.cfg", "port": 5014},
+    {"file": "i10_startup-config.cfg","port": 5015},
+    {"file": "i11_startup-config.cfg","port": 5016},
+    {"file": "i12_startup-config.cfg", "port": 5017},
+    {"file": "i13_startup-config.cfg", "port": 5018},
+    {"file": "i14_startup-config.cfg","port": 5019},
 ]
 
 # Charger le fichier JSON
