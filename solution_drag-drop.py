@@ -78,7 +78,7 @@ router bgp {AS}
  {static}
 """
 # Charger le fichier JSON
-with open('intent.json', 'r') as JSON:
+with open('intent_sujet.json', 'r') as JSON:
     intent = json.load(JSON)
 
 # Fonction pour générer les adresses IPv6 des interfaces intra-domain
@@ -132,20 +132,24 @@ def interfaces_config():
     for link in intent['reseau']:
         router_name_X, inter_X = link[0]
         router_name_Y, inter_Y = link[1]
-        router_X_id = router_id[router_name_X]
-        router_Y_id = router_id[router_name_Y]
-        AS_X = router_domain[router_X_id][0]
-        AS_Y = router_domain[router_Y_id][0]
+        try:
+            router_X_id = router_id[router_name_X]
+            router_Y_id = router_id[router_name_Y]
+            AS_X = router_domain[router_X_id][0]
+            AS_Y = router_domain[router_Y_id][0]
 
         if AS_X!=AS_Y:	#regarde si les 2 routeurs sont dans le même domaine
             out_domain[router_X_id].append(router_Y_id)
             out_domain[router_Y_id].append(router_X_id)
 
-            all_int_config[router_X_id] += generate_interface_config(None,  router_X_id, router_Y_id, inter_X) # IP pour le routeur X
-            all_int_config[router_Y_id] += generate_interface_config(None, router_Y_id, router_X_id, inter_Y) # IP pour le routeur Y
-        else:
-            all_int_config[router_X_id] += generate_interface_config(AS_X,  router_X_id, router_Y_id, inter_X) # IP pour le routeur X
-            all_int_config[router_Y_id] += generate_interface_config(AS_Y, router_Y_id, router_X_id, inter_Y) # IP pour le routeur Y
+                all_int_config[router_X_id] += generate_interface_config(None,  router_X_id, router_Y_id, inter_X) # IP pour le routeur X
+                all_int_config[router_Y_id] += generate_interface_config(None, router_Y_id, router_X_id, inter_Y) # IP pour le routeur Y
+            else:
+                all_int_config[router_X_id] += generate_interface_config(AS_X,  router_X_id, router_Y_id, inter_X) # IP pour le routeur X
+                all_int_config[router_Y_id] += generate_interface_config(AS_Y, router_Y_id, router_X_id, inter_Y) # IP pour le routeur Y
+        
+        except Exception as e:
+            print(f"Vérifier les noms de routeur : {e}")
 	
     return all_int_config, out_domain
 
