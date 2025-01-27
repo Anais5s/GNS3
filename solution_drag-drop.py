@@ -122,8 +122,7 @@ def generate_interface_loopback(AS, id):
 
 # Fonction pour générer toutes les configurations des interfaces de tous les routeurs selon les liens existants
 def interfaces_config():
-    # all_int_config = {id: "" for id in router_id.values()} # Initialise les dictionnaires pour stocker la configuration des interfaces de tous les routeurs
-    all_int_config = {}
+    all_int_config = {} # Initialise les dictionnaires pour stocker la configuration des interfaces de tous les routeurs
     for id in router_id.values():
         all_int_config[id] = generate_interface_loopback(router_domain[id][0], id)
     out_domain = {id: [] for id in router_id.values()}
@@ -138,7 +137,7 @@ def interfaces_config():
             AS_X = router_domain[router_X_id][0]
             AS_Y = router_domain[router_Y_id][0]
 
-            if AS_X!=AS_Y:	#regarde si les 2 routeurs sont dans le même domaine
+            if AS_X!=AS_Y:	# Regarde si les 2 routeurs sont dans le même domaine
                 out_domain[router_X_id].append(router_Y_id)
                 out_domain[router_Y_id].append(router_X_id)
 
@@ -154,10 +153,13 @@ def interfaces_config():
     return all_int_config, out_domain
 
 def generate_rprotocol(id):
+    redistribute_connected = ""
+    if len(out_domain[id])!=0: # Affichage de redistribute connected uniquement en bordure
+        redistribute_connected="\n redistribute connected"
     if (router_domain[id][1]=="RIP"):
-        return f"ipv6 router rip {process_rip} \nredistribute connected"
+        return f"ipv6 router rip {process_rip}"+redistribute_connected
     else:
-        return f"ipv6 router ospf {process_ospf}\nrouter-id {id}.{id}.{id}.{id}" # Possibilte de creation d'un dico associant un router id a chaque routeur
+        return f"ipv6 router ospf {process_ospf}\n router-id {id}.{id}.{id}.{id}"+redistribute_connected # Possibilte de creation d'un dico associant un router id a chaque routeur
 
 def generate_bgp(id):
     neighbor_entries = ""
