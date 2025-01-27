@@ -1,8 +1,13 @@
 {
     "telnet": {
-        "GNS3_server_url": "www.telnet.com",
-        "port": 5000,
-        "projet_name": "GNS3"
+        "port": [
+            ["R1", 5000],
+            ["R2", 5001],
+            ["R3", 5002],
+            ["R4", 5003],
+            ["R5", 5004],
+            ["R6", 5005]
+        ]
     },
 
     "domain": [
