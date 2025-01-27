@@ -138,9 +138,9 @@ def interfaces_config():
             AS_X = router_domain[router_X_id][0]
             AS_Y = router_domain[router_Y_id][0]
 
-        if AS_X!=AS_Y:	#regarde si les 2 routeurs sont dans le même domaine
-            out_domain[router_X_id].append(router_Y_id)
-            out_domain[router_Y_id].append(router_X_id)
+            if AS_X!=AS_Y:	#regarde si les 2 routeurs sont dans le même domaine
+                out_domain[router_X_id].append(router_Y_id)
+                out_domain[router_Y_id].append(router_X_id)
 
                 all_int_config[router_X_id] += generate_interface_config(None,  router_X_id, router_Y_id, inter_X) # IP pour le routeur X
                 all_int_config[router_Y_id] += generate_interface_config(None, router_Y_id, router_X_id, inter_Y) # IP pour le routeur Y
