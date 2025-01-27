@@ -1,10 +1,9 @@
 import telnetlib
 import time
 import json
-import re
 
 # Charger le fichier JSON
-with open('intent.json', 'r') as JSON:
+with open('intent_v1.json', 'r') as JSON:
     intent = json.load(JSON)
 
 
