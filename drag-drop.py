@@ -218,7 +218,7 @@ for router_name in router_id.keys():
     config = generate_config(router_name, all_int_config)
     
     # Sauvegarder la configuration dans un fichier
-    filename = f"i{router_name[1:]}_startup-config.cfg"
+    filename = f"config\i{router_name[1:]}_startup-config.cfg"
     with open(filename, 'w') as f:
         f.write(config)
 
