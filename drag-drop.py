@@ -95,20 +95,24 @@ def generate_ipv6_address_extern(router_id, neighbor_id):
     Y = max(router_id, neighbor_id)
     return f"2001:{X}:{Y}::{router_id}/64"
 
-def generate_interface_protocol(router_id, neighbor_id):
+def generate_interface_protocol(router_id, neighbor_id, cost):
     if (router_domain[router_id]!=router_domain[neighbor_id]):
         return ""
     elif (router_domain[router_id][1]=="RIP"):
         return f"ipv6 rip {process_rip} enable"
     else:
-        return f"ipv6 ospf {process_ospf} area {area_ospf}"  # On pourrait avoir un dico area_ospf qui associe un numero d'AS a un numero d'area
+        if cost!=0:
+            return f"ipv6 ospf {process_ospf} area {area_ospf}\n ipv6 osp cost {cost}" 
+        else:
+            return f"ipv6 ospf {process_ospf} area {area_ospf}"
+        # On pourrait avoir un dico area_ospf qui associe un numero d'AS a un numero d'area
 
 # Fonction pour générer la configuration d'une interface
-def generate_interface_config(AS, router_id, neighbor_id, inter):
+def generate_interface_config(AS, router_id, neighbor_id, inter, cost):
     int_config = interface_template.format(
         int_name=inter,
         int_ip=generate_ipv6_address_intra(AS, router_id, neighbor_id) if AS else generate_ipv6_address_extern(router_id, neighbor_id),
-        protocol=generate_interface_protocol(router_id, neighbor_id)
+        protocol=generate_interface_protocol(router_id, neighbor_id,cost)
     )
     return int_config
 
@@ -116,7 +120,7 @@ def generate_interface_loopback(AS, id):
     int_config = interface_template.format(
         int_name="loopback0",
         int_ip=f"2001:{AS[2:]}::{id}/128",
-        protocol=generate_interface_protocol(id,id)
+        protocol=generate_interface_protocol(id,id,0)
     )
     return int_config
 
@@ -129,8 +133,8 @@ def interfaces_config():
 
     # Collecte des liens entre les routeurs
     for link in intent['reseau']:
-        router_name_X, inter_X = link[0]
-        router_name_Y, inter_Y = link[1]
+        router_name_X, inter_X, cost_X= link[0]
+        router_name_Y, inter_Y, cost_Y= link[1]
         try:
             router_X_id = router_id[router_name_X]
             router_Y_id = router_id[router_name_Y]
@@ -141,11 +145,11 @@ def interfaces_config():
                 out_domain[router_X_id].append(router_Y_id)
                 out_domain[router_Y_id].append(router_X_id)
 
-                all_int_config[router_X_id] += generate_interface_config(None,  router_X_id, router_Y_id, inter_X) # IP pour le routeur X
-                all_int_config[router_Y_id] += generate_interface_config(None, router_Y_id, router_X_id, inter_Y) # IP pour le routeur Y
+                all_int_config[router_X_id] += generate_interface_config(None,  router_X_id, router_Y_id, inter_X,0) # IP pour le routeur X
+                all_int_config[router_Y_id] += generate_interface_config(None, router_Y_id, router_X_id, inter_Y,0) # IP pour le routeur Y
             else:
-                all_int_config[router_X_id] += generate_interface_config(AS_X,  router_X_id, router_Y_id, inter_X) # IP pour le routeur X
-                all_int_config[router_Y_id] += generate_interface_config(AS_Y, router_Y_id, router_X_id, inter_Y) # IP pour le routeur Y
+                all_int_config[router_X_id] += generate_interface_config(AS_X,  router_X_id, router_Y_id, inter_X, cost_X) # IP pour le routeur X
+                all_int_config[router_Y_id] += generate_interface_config(AS_Y, router_Y_id, router_X_id, inter_Y, cost_Y) # IP pour le routeur Y
         
         except Exception as e:
             print(f"Vérifier les noms de routeur : {e}")
