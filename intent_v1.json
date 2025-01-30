@@ -6,21 +6,37 @@
             ["R3", 5002],
             ["R4", 5003],
             ["R5", 5004],
-            ["R6", 5005]
+            ["R6", 5005],
+            ["R7", 5006],
+            ["R8", 5007]
         ]
     },
 
     "domain": [
         {
         "AS": "AS100",
+        "type": "Self",
         "protocol": "RIP",
         "router": ["R1", "R2", "R3"]
         },
         {
         "AS": "AS200",
+        "type": "Peer", 
         "protocol": "OSPF",
         "router": ["R4", "R5", "R6"]
-        }
+        },
+        {
+        "AS": "AS300",
+        "type": "Client", 
+        "protocol": "OSPF",
+        "router": ["R7"]
+        },
+        {
+        "AS": "AS500",
+        "type": "Provider", 
+        "protocol": "OSPF",
+        "router": ["R8"]
+        }        
     ],
 
     "reseau": [
@@ -28,6 +44,8 @@
         [["R2", "GigabitEthernet2/0",0], ["R3", "GigabitEthernet2/0",0]],
         [["R3", "GigabitEthernet1/0",0], ["R4", "GigabitEthernet1/0",0]],
         [["R4", "GigabitEthernet2/0",10], ["R5", "GigabitEthernet2/0",10]],
-        [["R5", "GigabitEthernet1/0",10], ["R6", "GigabitEthernet1/0",10]]
+        [["R5", "GigabitEthernet1/0",10], ["R6", "GigabitEthernet1/0",10]],
+        [["R3", "GigabitEthernet3/0",0], ["R7","GigabitEthernet3/0",0]],
+        [["R3", "FastEthernet0/0",0], ["R8","FastEthernet0/0",0]]
     ]
 }

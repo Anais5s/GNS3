@@ -67,7 +67,10 @@ router bgp {AS}
  address-family ipv6
  {network}
  {neighbor_activations}
+ {routemap_activations}
  exit-address-family
+ !
+ {routemaps}
  !
  ip forward-protocol nd
  !
@@ -75,8 +78,12 @@ router bgp {AS}
  no ip http server
  no ip http secure-server
  !
+ !
  {static}
 """
+
+
+
 # Charger le fichier JSON
 with open('intent_v1.json', 'r') as JSON:
     intent = json.load(JSON)
@@ -102,7 +109,7 @@ def generate_interface_protocol(router_id, neighbor_id, cost):
         return f"ipv6 rip {process_rip} enable"
     else:
         if cost!=0:
-            return f"ipv6 ospf {process_ospf} area {area_ospf}\n ipv6 osp cost {cost}" 
+            return f"ipv6 ospf {process_ospf} area {area_ospf}\n ipv6 ospf cost {cost}" 
         else:
             return f"ipv6 ospf {process_ospf} area {area_ospf}"
         # On pourrait avoir un dico area_ospf qui associe un numero d'AS a un numero d'area
@@ -182,17 +189,49 @@ def generate_bgp(id):
             neighbor_ip=f" 2001:{min(router,id)}:{max(router,id)}::{router}"
             neighbor_entries += f" neighbor {neighbor_ip} remote-as {AS}\n"        
             neighbor_activations += f" neighbor {neighbor_ip} activate\n"
-            network += f"network 2001:{router_domain[id][0][2::]}::/32"
-            static = f"ipv6 route 2001:{router_domain[id][0][2::]}::/32 Null0"
+            network += f"network 2001:{router_domain[id][0][2::]}::/32\n "
+            static = f"ipv6 route 2001:{router_domain[id][0][2::]}::/32 Null0\n "
     bgp = bgp_template.format(
         AS = router_domain[id][0][2:],
         bgp_id = f"{id}.{id}.{id}.{id}",
         neighbor_entries = neighbor_entries.strip(),
         network = network,
         neighbor_activations = neighbor_activations.strip(),
-        static = static    
+        routemap_activations=policies_in(id)+policies_out(id),
+        static = static,
+        routemaps=maps(id)    
 	)
     return bgp
+
+def maps(id):
+    if out_domain[id]!=[]:
+        mapClient=f"route-map mapClient permit 10\n  set local-preference 150\n  set community {router_domain[id][0][2:]}:150\n"
+        mapPeer="route-map mapPeer permit 10\n  set local-preference 100\n"
+        mapProvider="route-map mapProvider permit 10\n  set local-preference 50\n"
+        outBound=f"route-map outBound deny 10\n  match community {router_domain[id][0][2:]}:150\n route-map outBound permit 20\n"
+        return f"{mapClient} {mapPeer} {mapProvider} {outBound}"
+    else:
+        return ""
+    
+def policies_in(id):
+    activations=""
+    if router_domain[id][2]=="Self" and out_domain[id]!=[]: #si on est dans notre AS et qu'on est en bordure
+        for router in out_domain[id]:
+            if router_domain[router][2]=="Client":
+                activations += f"neighbor 2001:{id}:{router}::{router} route-map mapClient in\n "
+            elif router_domain[router][2]=="Peer":
+                activations += f"neighbor 2001:{id}:{router}::{router} route-map mapPeer in\n "
+            else:
+                activations += f"neighbor 2001:{id}:{router}::{router} route-map mapProvider in\n "
+    return activations
+
+def policies_out(id):
+    activations=""
+    if router_domain[id][2]=="Self" and out_domain[id]!=[]:
+        for router in out_domain[id]:
+            if router_domain[router][2]=="Peer" or router_domain[router][2]=="Provider":
+                activations += f"neighbor 2001:{id}:{router}::{router} route-map outBound out\n "
+    return activations
 
 
 # Fonction pour générer la configuration de chaque routeur
@@ -211,7 +250,7 @@ for domain in intent['domain']:
     for router_name in domain['router']:
         router_id[router_name]=i
         i+=1 # nouvel id
-        router_domain[router_id[router_name]]=domain['AS'],domain['protocol']
+        router_domain[router_id[router_name]]=domain['AS'],domain['protocol'],domain['type']
 
 # Récupérer les configurations des interfaces de tous les routeurs selon les liens existants
 all_int_config, out_domain = interfaces_config()
