@@ -26,6 +26,7 @@ def configure_device(CONFIG_FILE,port):
             if command and command!="!": 
                 tn.write(command.encode('ascii') + b"\r\n")
                 output = tn.read_very_eager().decode('ascii')  # Lire la sortie
+                time.sleep(0.1)
 
         tn.write(b"write"+b"\r\n")
         time.sleep(0.3)

@@ -71,15 +71,16 @@ router bgp {AS}
  exit-address-family
  !
  {routemaps}
- !
- ip forward-protocol nd
- !
- !
- no ip http server
- no ip http secure-server
- !
- !
- {static}
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+!
+{static}
+!
 """
 
 
@@ -175,7 +176,7 @@ def generate_rprotocol(id):
 def generate_bgp(id):
     neighbor_entries = ""
     neighbor_activations = ""
-    network = ""
+    network=""
     static = ""
     for router in router_domain:
         if router_domain[router][0]==router_domain[id][0] and router!=id:	# Trouve les voisins qui sont dans le meme AS
@@ -186,7 +187,7 @@ def generate_bgp(id):
             neighbor_activations += f" neighbor {neighbor_ip} activate\n"
         elif router in out_domain[id]: 	# Partie entre 2 AS
             AS=router_domain[router][0][2:]
-            neighbor_ip=f" 2001:{min(router,id)}:{max(router,id)}::{router}"
+            neighbor_ip=f"2001:{min(router,id)}:{max(router,id)}::{router}"
             neighbor_entries += f" neighbor {neighbor_ip} remote-as {AS}\n"        
             neighbor_activations += f" neighbor {neighbor_ip} activate\n"
             network += f"network 2001:{router_domain[id][0][2::]}::/32\n "
@@ -204,11 +205,11 @@ def generate_bgp(id):
     return bgp
 
 def maps(id):
-    if out_domain[id]!=[]:
-        mapClient=f"route-map mapClient permit 10\n  set local-preference 150\n  set community {router_domain[id][0][2:]}:150\n"
-        mapPeer="route-map mapPeer permit 10\n  set local-preference 100\n"
-        mapProvider="route-map mapProvider permit 10\n  set local-preference 50\n"
-        outBound=f"route-map outBound deny 10\n  match community {router_domain[id][0][2:]}:150\n route-map outBound permit 20\n"
+    if out_domain[id]!=[] and router_domain[id][2]=="Self":
+        mapClient=f"""route-map mapClient permit 10\n  set local-preference 150\n  set community {router_domain[id][0][2:]}:150\n"""
+        mapPeer=f"route-map mapPeer permit 10\n  set local-preference 100\n  set community {router_domain[id][0][2:]}:100\n"
+        mapProvider=f"route-map mapProvider permit 10\n  set local-preference 50\n  set community {router_domain[id][0][2:]}:50\n"
+        outBound=f"ip community-list standard PEER permit 100:100\n ip community-list standard PROVIDER permit 100:50\n route-map outBound deny 10\n  match community PEER\n route-map outBound deny 20\n  match community PROVIDER\n route-map outBound permit 30\n"
         return f"{mapClient} {mapPeer} {mapProvider} {outBound}"
     else:
         return ""
