@@ -21,19 +21,19 @@
         },
         {
         "AS": "AS200",
-        "type": "Peer", 
+        "type": "Peer",
         "protocol": "OSPF",
         "router": ["R4", "R5", "R6"]
         },
         {
         "AS": "AS300",
-        "type": "Client", 
+        "type": "Client",
         "protocol": "OSPF",
         "router": ["R7"]
         },
         {
         "AS": "AS500",
-        "type": "Provider", 
+        "type": "Provider",
         "protocol": "OSPF",
         "router": ["R8"]
         }        

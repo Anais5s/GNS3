@@ -3,7 +3,7 @@ import time
 import json
 
 # Charger le fichier JSON
-with open('intent_v1.json', 'r') as JSON:
+with open('intent_v2(sujet).json', 'r') as JSON:
     intent = json.load(JSON)
 
 
@@ -28,9 +28,9 @@ def configure_device(CONFIG_FILE,port):
                 output = tn.read_very_eager().decode('ascii')  # Lire la sortie
                 time.sleep(0.1)
 
-        tn.write(b"write"+b"\r\n")
-        time.sleep(0.3)
-        tn.write(b"y"+b"\r\n")
+        # tn.write(b"write"+b"\r\n")
+        # time.sleep(0.3)
+        # tn.write(b"y"+b"\r\n")
         print(f"Configuration terminée pour 127.0.0.1:{port}")
     except Exception as e:
         print(f"Erreur avec 127.0.0.1:{port} : {e}")
