@@ -127,7 +127,7 @@ def generate_interface_config(AS, router_id, neighbor_id, inter, cost):
 def generate_interface_loopback(AS, id):
     int_config = interface_template.format(
         int_name="loopback0",
-        int_ip=f"2001:{AS[2:]}::{id}/128",
+        int_ip=f"2001:FF::{id}/128",
         protocol=generate_interface_protocol(id,id,0)
     )
     return int_config
