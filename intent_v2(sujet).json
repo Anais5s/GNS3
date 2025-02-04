@@ -29,17 +29,17 @@
         "router": ["R1", "R2", "R3", "R4", "R5", "R6", "R7"]
         },
         {
-        "AS": "AS200",
-        "type": "Provider",
-        "protocol": "OSPF",
-        "router": ["R15"]
-        },
-        {
         "AS": "AS300",
         "protocol": "OSPF",
         "type": "Peer",
         "router": ["R8", "R9", "R10","R11", "R12", "R13", "R14"]
         },
+        {
+            "AS": "AS200",
+            "type": "Provider",
+            "protocol": "OSPF",
+            "router": ["R15"]
+            },
         {
         "AS": "AS400",
         "type": "Client",
