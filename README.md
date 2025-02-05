@@ -18,3 +18,7 @@ Avec cette méthode, on peut :
 - Brancher 9999 switch pour connecter plusieurs routeurs entre eux
 
 Cette méthode est donc facile à déployer, elle utilise le large panel d'adresses IPv6 disponibles et rend la supervision du réseau plus simple.
+
+Communities:
+Pour la route map out appliquee sur les peer et provider on a fait un deny PEER et deny PROVIDER + permit le reste (pour propager le prefixe de notre propre AS).
+On aurait voulu faire un permit CLIENT, permit PREFIX (prefixe-list avec le prefixe de notre AS) + deny le reste mais il y a eu des erreurs que nous n'avons pas su regler.
