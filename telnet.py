@@ -3,7 +3,7 @@ import time
 import json
 
 # Charger le fichier JSON
-with open('intent_v3.json', 'r') as JSON:
+with open('intent_v1.json', 'r') as JSON:
     intent = json.load(JSON)
 
 

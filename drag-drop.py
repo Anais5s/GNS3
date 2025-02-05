@@ -86,7 +86,7 @@ no ip http secure-server
 
 
 # Charger le fichier JSON
-with open('intent_v3.json', 'r') as JSON:
+with open('intent_v1.json', 'r') as JSON:
     intent = json.load(JSON)
 
 # Fonction pour générer les adresses IPv6 des interfaces intra-domain
