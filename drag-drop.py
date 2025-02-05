@@ -192,6 +192,7 @@ def generate_bgp(id):
             neighbor_entries += f" neighbor {neighbor_ip} remote-as {AS}\n"        
             neighbor_activations += f" neighbor {neighbor_ip} activate\n"
             network += f"network 2001:{router_domain[id][0][2::]}::/32\n "
+            network += f"network 2001:{min(router,id)}:{max(router,id)}::/64\n "
             static = f"ipv6 route 2001:{router_domain[id][0][2::]}::/32 Null0\n "
     bgp = bgp_template.format(
         AS = router_domain[id][0][2:],
