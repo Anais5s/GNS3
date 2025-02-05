@@ -86,7 +86,7 @@ no ip http secure-server
 
 
 # Charger le fichier JSON
-with open('intent_v2(sujet).json', 'r') as JSON:
+with open('intent_v3.json', 'r') as JSON:
     intent = json.load(JSON)
 
 # Fonction pour générer les adresses IPv6 des interfaces intra-domain
@@ -233,7 +233,6 @@ def policies_out(id):
             if router_domain[router][2]=="Peer" or router_domain[router][2]=="Provider":
                 activations += f"neighbor 2001:{id}:{router}::{router} route-map outBound out\n "
     return activations
-
 
 # Fonction pour générer la configuration de chaque routeur
 def generate_config(router_name, all_int_config):
