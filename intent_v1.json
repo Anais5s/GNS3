@@ -8,7 +8,9 @@
             ["R5", 5004],
             ["R6", 5005],
             ["R7", 5006],
-            ["R8", 5007]
+            ["R8", 5007],
+            ["R9", 5008],
+            ["R10", 5009]
         ]
     },
 
@@ -29,13 +31,13 @@
         "AS": "AS300",
         "type": "Client",
         "protocol": "OSPF",
-        "router": ["R7"]
+        "router": ["R7","R8"]
         },
         {
-        "AS": "AS500",
+        "AS": "AS400",
         "type": "Provider",
         "protocol": "OSPF",
-        "router": ["R8"]
+        "router": ["R9","R10"]
         }        
     ],
 
@@ -46,6 +48,8 @@
         [["R4", "GigabitEthernet2/0",10], ["R5", "GigabitEthernet2/0",10]],
         [["R5", "GigabitEthernet1/0",10], ["R6", "GigabitEthernet1/0",10]],
         [["R3", "GigabitEthernet3/0",0], ["R7","GigabitEthernet3/0",0]],
-        [["R3", "FastEthernet0/0",0], ["R8","FastEthernet0/0",0]]
+        [["R3", "FastEthernet0/0",0], ["R9","FastEthernet0/0",0]],
+        [["R7", "GigabitEthernet1/0",0], ["R8","GigabitEthernet1/0",0]],
+        [["R9", "GigabitEthernet1/0",0], ["R10","GigabitEthernet1/0",0]]
     ]
 }
