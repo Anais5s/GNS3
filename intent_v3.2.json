@@ -14,7 +14,8 @@
             ["R11", 5010],
             ["R12", 5011],
             ["R13", 5012],
-            ["R14", 5013]
+            ["R14", 5013],
+            ["R15", 5014]
         ]
     },
 
@@ -29,19 +30,19 @@
         "AS": "AS200",
         "protocol": "OSPF",
         "type": "Provider",
-        "router": ["R8", "R9"]
+        "router": ["R8", "R9", "R10"]
         },
         {
         "AS": "AS300",
         "type": "Peer",
         "protocol": "RIP",
-        "router": ["R10", "R11", "R12"]
+        "router": ["R11", "R12", "R13"]
         },
         {
         "AS": "AS400",
         "type": "Client",
         "protocol": "RIP",
-        "router": ["R13", "R14"]
+        "router": ["R14", "R15"]
         }
     ],
 
@@ -57,13 +58,14 @@
         [["R4", "FastEthernet0/0", 0], ["R7", "FastEthernet0/0", 0]],
         [["R5", "FastEthernet0/0", 0], ["R6", "FastEthernet0/0", 0]],
         [["R2", "GigabitEthernet4/0", 0], ["R8", "GigabitEthernet1/0", 0]],
-        [["R4", "GigabitEthernet4/0", 0], ["R9", "GigabitEthernet1/0", 0]],
-        [["R8", "GigabitEthernet2/0", 0], ["R9", "GigabitEthernet2/0", 0]],
-        [["R6", "GigabitEthernet2/0", 0], ["R10", "GigabitEthernet2/0", 0]],
-        [["R7", "GigabitEthernet1/0", 0], ["R11", "GigabitEthernet1/0", 0]],
-        [["R10", "GigabitEthernet1/0", 0], ["R12", "GigabitEthernet1/0", 0]],
-        [["R11", "GigabitEthernet2/0", 0], ["R12", "GigabitEthernet2/0", 0]],
-        [["R3", "GigabitEthernet4/0", 0], ["R13", "GigabitEthernet1/0", 0]],
-        [["R13", "GigabitEthernet2/0", 0], ["R14", "GigabitEthernet2/0", 0]]
+        [["R4", "GigabitEthernet4/0", 0], ["R9", "GigabitEthernet2/0", 0]],
+        [["R8", "GigabitEthernet2/0", 0], ["R10", "GigabitEthernet2/0", 0]],
+        [["R9", "GigabitEthernet1/0", 0], ["R10", "GigabitEthernet1/0", 0]],
+        [["R6", "GigabitEthernet2/0", 0], ["R11", "GigabitEthernet2/0", 0]],
+        [["R7", "GigabitEthernet1/0", 0], ["R12", "GigabitEthernet1/0", 0]],
+        [["R11", "GigabitEthernet1/0", 0], ["R13", "GigabitEthernet1/0", 0]],
+        [["R12", "GigabitEthernet2/0", 0], ["R13", "GigabitEthernet2/0", 0]],
+        [["R3", "GigabitEthernet4/0", 0], ["R14", "GigabitEthernet1/0", 0]],
+        [["R14", "GigabitEthernet2/0", 0], ["R15", "GigabitEthernet2/0", 0]]
     ]
 }
