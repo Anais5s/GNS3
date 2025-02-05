@@ -184,6 +184,7 @@ def generate_bgp(id):
             neighbor_ip=f"2001:FF::{router}"	# Adresse loopback du voisin 
             neighbor_entries += f" neighbor {neighbor_ip} remote-as {AS}\n"
             neighbor_entries += f" neighbor {neighbor_ip} update-source Loopback0\n"
+            neighbor_entries += f" neighbor {neighbor_ip} send-community\n"
             neighbor_activations += f" neighbor {neighbor_ip} activate\n"
         elif router in out_domain[id]: 	# Partie entre 2 AS
             AS=router_domain[router][0][2:]
