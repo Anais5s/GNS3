@@ -86,7 +86,7 @@ no ip http secure-server
 
 
 # Charger le fichier JSON
-with open('intent_v1.json', 'r') as JSON:
+with open('intent_v3_copy.json', 'r') as JSON:
     intent = json.load(JSON)
 
 # Fonction pour générer les adresses IPv6 des interfaces intra-domain
@@ -184,8 +184,8 @@ def generate_bgp(id):
             neighbor_ip=f"2001:FF::{router}"	# Adresse loopback du voisin 
             neighbor_entries += f" neighbor {neighbor_ip} remote-as {AS}\n"
             neighbor_entries += f" neighbor {neighbor_ip} update-source Loopback0\n"
-            neighbor_entries += f" neighbor {neighbor_ip} send-community\n"
             neighbor_activations += f" neighbor {neighbor_ip} activate\n"
+            neighbor_activations += f" neighbor {neighbor_ip} send-community\n"
         elif router in out_domain[id]: 	# Partie entre 2 AS
             AS=router_domain[router][0][2:]
             neighbor_ip=f"2001:{min(router,id)}:{max(router,id)}::{router}"
