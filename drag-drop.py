@@ -181,7 +181,7 @@ def generate_bgp(id):
     for router in router_domain:
         if router_domain[router][0]==router_domain[id][0] and router!=id:	# Trouve les voisins qui sont dans le meme AS
             AS = router_domain[id][0][2:]
-            neighbor_ip=f"2001:{AS}::{router}"	# Adresse loopback du voisin 
+            neighbor_ip=f"2001:FF::{router}"	# Adresse loopback du voisin 
             neighbor_entries += f" neighbor {neighbor_ip} remote-as {AS}\n"
             neighbor_entries += f" neighbor {neighbor_ip} update-source Loopback0\n"
             neighbor_activations += f" neighbor {neighbor_ip} activate\n"
